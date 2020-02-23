@@ -1,7 +1,11 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort
 import os
+import json
+
 
 app = Flask(__name__)
+
+account_database = json.load(open("databases/accounts.json", "r"))
 
 creds = {
     'teja@gmail.com' : '1234',
@@ -47,63 +51,55 @@ def home():
     else:
         return "You have already logged in... <a href='/logout'>Logout</a>"
 
-@app.route('/register')
-# For showing register page
-def register():
-    return render_template('registration.html')
-
-# url_for('addToCart', item = "banana")
-
-# @app.route('/addToCart/<string:item>')
-# def addToCart(item):
-#     print(item)
-
-@app.route('/register_details', methods=['POST'])
+@app.route('/register', methods=['GET','POST'])
 # Storeing register details
-def store():
-    email = request.form['email']
-    uname =  request.form['username']
-    passw = request.form['password']   
-    role = request.form['role']       
-    print(uname + " " + passw + ' ' + email + " " + role)
+def register():
+    if request.method == 'POST':
+        email = request.form['email']
+        uname =  request.form['username']
+        passw = request.form['password']   
+        role = request.form['role']       
+        print(uname + " " + passw + ' ' + email + " " + role)
 
-    creds[email] = passw
-
-    if(role == 'Admin'):
-        admin[email] = uname
-        roles[email] = 'admin'
-    elif(role == "Stuent"):
-        student[email] = uname
-        roles[email] = 'student'
-    else:
-        staff[email] = uname
-        roles[email] = 'staff'
+        if uname not in account_database['users']:
+            uid = len(account_database['users'])
     
-    creds[email] = passw
+            account_database['accounts'][uid] = {
+                "email" :email,
+                "username": uname,
+                "password": passw,
+                "designation": role 
+            }
+    
+            account_database['users'].append(uname)
 
-    print(admin)
-    print(creds)
-    return ("done")
+            json.dump(account_database, open("databases/accounts.json", "w"))
 
-
-@app.route('/handle', methods=['POST'])
-# Login auth
-def handle_data():
-    print(creds)
-    email =  request.form['email']
-    passw = request.form['password']  
-    if(creds[email] == passw):
-        session['logged_in'] = True
-        if(roles[email] == 'admin'):
-            name =  admin[email]
-            return render_template('ad&staffHome.html', name= name)
-        elif(roles[email] == 'staff'):
-            name =  staff[email]
-            return render_template('ad&staffHome.html', name = name)
-        elif(roles[email] == 'student'):
-            return render_template('student.html', result = food)
+            flash('Registeredsuccessfully, plz login.')
+            return home()
+        else:
+            return("User name or email already exists.. Please try some other.")
     else:
-        return("Wrong Password")
+        return render_template('registration.html')
+
+
+@app.route('/login', methods=['GET','POST'])
+# Login auth
+def login():
+    if request.method == 'POST':
+        print(creds)
+        uname =  request.form['uname']
+        passw = request.form['password']  
+
+        if uname in account_database['users']:
+            uid = str(account_database['users'].index(uname))
+            if passw == account_database['accounts'][uid]['password']:
+                if account_database['accounts'][uid]['designation'] == 'Admin' or account_database['accounts'][uid]['designation'] == 'Staff':
+                    return render_template('ad&staffHome.html', name= uname)
+                else:
+                    return render_template('student.html', result = food, name = uname)
+        
+        return "Login failed!! Check credentials"
   
 @app.route("/logout")
 def logout():

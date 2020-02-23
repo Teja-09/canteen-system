@@ -1,0 +1,7 @@
+{
+  "accounts": {
+    "0": { "username": "name", "password": "pass", "designation": "user" },
+    "1": { "username": "user", "password": "password", "designation": "user" }
+  },
+  "users": ["name", "user"]
+}

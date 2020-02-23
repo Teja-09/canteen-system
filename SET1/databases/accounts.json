@@ -1,0 +1,41 @@
+{
+    "accounts": {
+        "0": {
+            "email": "teja@gmail.com",
+            "username": "teja",
+            "password": "1234",
+            "designation": "Admin"
+        },
+        "1": {
+            "email": "gad@gmail.com",
+            "username": "GAD",
+            "password": "2345",
+            "designation": "Student"
+        },
+        "2": {
+            "email": "mona@gmail.com",
+            "username": "monea",
+            "password": "1478",
+            "designation": "Student"
+        },
+        "3": {
+            "email": "mobile@gmail.com",
+            "username": "mob",
+            "password": "2485",
+            "designation": "Admin"
+        },
+        "4": {
+            "email": "test@gmail.com",
+            "username": "test1",
+            "password": "9478",
+            "designation": "Admin"
+        },
+        "5": {
+            "email": "test1@gmail.com",
+            "username": "test2",
+            "password": "1452",
+            "designation": "Admin"
+        }
+    },
+    "users": ["teja", "GAD", "monea", "mob", "test1", "test2"]
+}
